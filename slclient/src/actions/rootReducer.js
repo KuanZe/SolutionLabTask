@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import indexActions from './indexActions';
+import appState from './appActions';
 export default combineReducers({
-    indexActions
+    appState
 });

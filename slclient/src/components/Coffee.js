@@ -1,20 +1,12 @@
 import React from 'react';
 import '../css/Coffee.css';
 
-class App extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            title: "",
-            price: "",
-            imageUrl: "",
-            coffeeList : []
-        }
-    }
-    const { title, price, imageUrl, index, onClick } = props;
+const Coffee = (props) => {
+    const { title, price, imageUrl, removeFunction } = props;
 
     return (
-        <div index={index} className="coffeeContainer" onClick={onClick}>
+        <div className="coffeeContainer">
+            <div className="mask" onClick={removeFunction}>Remove item</div>
             <img src={imageUrl} alt={title}></img>
             <label className="information">{title}, Price: {price}$</label>
         </div>

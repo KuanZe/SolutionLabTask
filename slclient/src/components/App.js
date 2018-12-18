@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import '../css/App.css';
-import { indexActions } from '../actions/indexActions'
+import { actions  } from '../actions/appActions'
 import Coffee from './Coffee'
 
 class App extends React.Component {
@@ -10,30 +10,28 @@ class App extends React.Component {
       this.state = {
           title: "",
           price: "",
-          imageUrl: "",
-          coffeeList : []
+          imageUrl: ""
       }
   }
 
   addNewCoffee = () => {
+    const { title, price, imageUrl } = this.state;
+    const { addCoffee } = this.props;
+    if(!title || !price || !imageUrl){
+            alert("Please fill all form fields");
+            return;
+    }
     let newCoffee = {
-      title:this.state.title,
-      price:this.state.price,
-      imageUrl:this.state.imageUrl,
+      title: title,
+      price: price,
+      imageUrl: imageUrl,
     };
-    this.setState({
-      coffeeList :this.state.coffeeList.concat([newCoffee])
-    })
+    addCoffee(newCoffee);
   }
 
-  removeCoffee = (e) => {
-    console.log(e.target);
-    let currentCoffeeList = [...this.state.coffeeList];
-    var index = currentCoffeeList.indexOf(e.target.value);
-    if (index !== -1) {
-      currentCoffeeList.splice(index, 1);
-      this.setState({coffeeList: currentCoffeeList});
-    }
+  removeCoffee = (id) => {
+    const { removeCoffee } = this.props;
+    removeCoffee(id);
   }
 
   handleChange = (e) =>{
@@ -53,20 +51,23 @@ class App extends React.Component {
     <div className="Form-add">
       <h2>Add new coffee</h2>
       <div>
-        <label>Title</label><input type="text" name="title" onChange={this.handleChange} />
+        <label>Title</label>
+        <input type="text" name="title" onChange={this.handleChange} />
       </div>
       <div>
-        <label>Price</label><input type="text" name="price" onChange={this.handleChange} />
+        <label>Price ($)</label>
+        <input type="number" step="0.01" name="price" onChange={this.handleChange} />
       </div>
       <div>
-        <label>Image url</label><input type="text" name="imageUrl" onChange={this.handleChange} />
+        <label>Image url</label>
+        <input type="text" name="imageUrl" onChange={this.handleChange} />
       </div>
       <div><button type="button" onClick={this.addNewCoffee}>Add</button></div>
     </div>
     <div className="App-container">
     {
-      this.state.coffeeList.map((item, i) => (
-        <Coffee key={i} index={i} title={item.title} price={item.price} imageUrl={item.imageUrl} onClick={e => this.removeCoffee(e)}/>
+      this.props.coffeeList.map((item) => (
+        <Coffee key={item.id} title={item.title} price={item.price} imageUrl={item.imageUrl} removeFunction={e => this.removeCoffee(item.id)}/>
       ))
     }
     </div>
@@ -74,12 +75,12 @@ class App extends React.Component {
   );
  }
 }
-const mapStateToProps = state => ({
-  ...state
+const mapStateToProps = ({ appState }) => ({
+  coffeeList: appState.coffeeList
  })
 
-const mapDispatchToProps = dispatch => ({
-  indexAction: () => dispatch(indexActions())
- })
+ const mapDispatchToProps = {
+  ...actions
+};
 
  export default connect(mapStateToProps, mapDispatchToProps)(App);
